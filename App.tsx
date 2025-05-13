@@ -1,130 +1,96 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+// App.tsx
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Animated, StyleSheet, Image } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import LoginScreen from './LoginScreen';
+import CategoryScreen from './category';
+import Politics from './Politics';
+import Sports from './Sports';
+import International from './international';
+import SignupScreen from './Signup';
+import BlogScreen from './BlogListScreen';
+import AddBlogScreen from './AddBlogScreen';
+import BlogDetailScreen from './BlogDetailScreen';
+import LiveNews from './LiveNews';
+import ProfileScreen from './ProfileScreen';
+export type RootStackParamList = {
+  Login: undefined;
+  Categories: undefined;
+  Politics: undefined;
+  Sports: undefined;
+  International: undefined;
+  Signup: undefined;
+  Blog: undefined;
+  AddBlog: undefined;
+  BlogDetail: undefined;
+  LiveNews: undefined;
+  Profile: undefined;
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+};
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+const App = () => {
+  const [isSplashVisible, setSplashVisible] = useState(true);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+    const timer = setTimeout(() => {
+      setSplashVisible(false);
+    }, 3000);
 
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the recommendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isSplashVisible) {
+    return (
+      <View style={styles.splashContainer}>
+        <Animated.Image
+          source={require('./assets/logo.jpg')}
+          style={[styles.logo, { opacity: fadeAnim }]}
+          resizeMode="contain"
+        />
+      </View>
+    );
+  }
 
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
-        </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Categories" component={CategoryScreen} />
+        <Stack.Screen name="Politics" component={Politics} />
+        <Stack.Screen name="Sports" component={Sports} />
+        <Stack.Screen name="International" component={International} />
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Blog" component={BlogScreen} />
+        <Stack.Screen name="AddBlog" component={AddBlogScreen} />
+        <Stack.Screen name="BlogDetail" component={BlogDetailScreen} />
+        <Stack.Screen name="LiveNews" component={LiveNews} />
+        <Stack.Screen name="Profile" component={ProfileScreen} /> 
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  splashContainer: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  logo: {
+    width: 150,
+    height: 150,
   },
 });
 
